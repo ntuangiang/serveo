@@ -4,7 +4,6 @@ services:
   serveo:
     image: ntuangiang/serveo
     env_file: docker-compose.env # Recommend, it's good to separate file
-
   nginx:
     image: nginx
 

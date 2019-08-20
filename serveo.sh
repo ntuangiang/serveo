@@ -21,28 +21,47 @@ write_ssh() {
   ssh-keyscan -t rsa serveo.net > ~/.ssh/known_hosts
 }
 
+validate_parameters() {
+  if [ ! -n "${SERVEO_SUB_DOMAIN_PORT}" ]; then
+    SERVEO_SUB_DOMAIN_PORT=80
+  fi
+
+  if [ ! -n "${SERVEO_PUBLISH_PROJECT_PORT}" ]; then
+    SERVEO_PUBLISH_PROJECT_PORT=80
+  fi
+}
+
+get_serveo_subdomain() {
+  SUB_DOMAIN=
+  if [ -n "${SERVEO_SUB_DOMAIN}" ]; then
+    SUB_DOMAIN="${SERVEO_SUB_DOMAIN}:${SERVEO_SUB_DOMAIN_PORT}"
+  else
+    SUB_DOMAIN="${SERVEO_SUB_DOMAIN_PORT}"
+  fi
+}
+
+get_serveo_ssh_subdomain() {
+  SUB_SSH_DOMAIN_INFO=
+  if [ -n "${SERVEO_SSH_USER}" ]; then
+    SUB_SSH_DOMAIN_INFO="${SERVEO_SSH_USER}@serveo.net"
+  else
+    SUB_SSH_DOMAIN_INFO="serveo.net"
+  fi
+}
+
 write_host
 write_ssh
 
-if [ ! -n "${SERVEO_SUB_DOMAIN_PORT}" ]; then
-  SERVEO_SUB_DOMAIN_PORT=80
+if [ -n "${SERVEO_CUSTOM_COMMAND}" ]; then
+  ${SERVEO_CUSTOM_COMMAND}
+else
+  validate_parameters
+  get_serveo_subdomain
+  get_serveo_ssh_subdomain
+
+  echo $SUB_SSH_DOMAIN_INFO
+  ssh -R ${SUB_DOMAIN}:${SERVEO_PUBLISH_PROJECT}:${SERVEO_PUBLISH_PROJECT_PORT} ${SUB_SSH_DOMAIN_INFO}
 fi
 
-if [ ! -n "${SERVEO_PUBLISH_PROJECT_PORT}" ]; then
-  SERVEO_PUBLISH_PROJECT_PORT=80
-fi
 
-if [ -n "${SERVEO_SSH_USER}" ]; then
-    if [ -n "${SERVEO_SUB_DOMAIN}" ]; then
-      ssh -R ${SERVEO_SUB_DOMAIN}:${SERVEO_SUB_DOMAIN_PORT}:${SERVEO_PUBLISH_PROJECT}:${SERVEO_PUBLISH_PROJECT_PORT} ${SERVEO_SUB_DOMAIN}@serveo.net
-    else
-      ssh -R ${SERVEO_SUB_DOMAIN_PORT}:${SERVEO_PUBLISH_PROJECT}:${SERVEO_PUBLISH_PROJECT_PORT} ${SERVEO_SUB_DOMAIN}@serveo.net
-    fi
-  else
-    if [ -n "${SERVEO_SUB_DOMAIN}" ]; then
-       ssh -R ${SERVEO_SUB_DOMAIN}:${SERVEO_SUB_DOMAIN_PORT}:${SERVEO_PUBLISH_PROJECT}:${SERVEO_PUBLISH_PROJECT_PORT} serveo.net
-    else
-       ssh -R ${SERVEO_SUB_DOMAIN_PORT}:${SERVEO_PUBLISH_PROJECT}:${SERVEO_PUBLISH_PROJECT_PORT} serveo.net
-    fi
-fi
 

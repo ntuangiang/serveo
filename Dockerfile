@@ -4,10 +4,10 @@ MAINTAINER ntuangiang@outlook.com
 
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y apt-utils \
-    gettext-base \
+    openssh-server autossh \
     iputils-ping \
     iproute2 \
-    vim openssh-server
+    vim
 
 COPY  ./serveo.sh /serveo.sh
 

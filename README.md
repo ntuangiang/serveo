@@ -65,6 +65,21 @@ services:
     image: nginx
 ```
 
+You can also add your custom command:
+
+```yml
+version: '3.7'
+
+services:
+  serveo:
+    image: ntuangiang/serveo
+    environment:
+      - SERVEO_CUSTOM_COMMAND=ssh -R 80:serveonginx:80 serveo.net
+
+  serveonginx:
+    image: nginx
+```
+
 2. use `docker-compose up` to start container.
 
 3. you need to use `docker-compose logs serveo` to see your new URL.
