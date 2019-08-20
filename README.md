@@ -7,11 +7,30 @@
 
 # Expose local servers to the internet
 
-[https://serveo.net](https://serveo.net) is an alternative for ngrok. [ntuangiang/serveo](https://hub.docker.com/r/ntuangiang/serveo) can let you secure URL to your localhost server through any NAT or firewall in Docker. And [ntuangiang/serveo-server](https://hub.docker.com/r/ntuangiang/serveo-server) can let you host your own serveo.
+[https://serveo.net](https://serveo.net) Serveo is an SSH server just for remote port forwarding. When a user connects to Serveo, they get a public URL that anybody can use to connect to their localhost server. 
+
+[ntuangiang/serveo](https://hub.docker.com/r/ntuangiang/serveo) can let you secure URL to your localhost server through any NAT or firewall in Docker.
 
 ## Usage
+1. Write a `docker-compose.yml` file.
 
-1. write a `docker-compose.yml` file.
+## Basic
+
+```yml
+version: '3.7'
+
+services:
+  serveo:
+    build:
+      context: .
+    environment:
+      - SERVEO_PUBLISH_PROJECT=serveonginx
+
+  serveonginx:
+    image: nginx
+```
+
+## Request a particular subdomain
 
 ```yml
 version: '3.7'
@@ -22,16 +41,55 @@ services:
       context: .
     environment:
       - SERVEO_SUB_DOMAIN=ntuangiang
-      - SERVEO_SUB_DOMAIN_PORT=80
-      - SERVEO_SSH_USER=ntuangiang
+      - SERVEO_SUB_DOMAIN_PORT=80 // If it's 80, you don't need this line 
       - SERVEO_PUBLISH_PROJECT=serveonginx
-      - SERVEO_PUBLISH_PROJECT_PORT=80
+      - SERVEO_PUBLISH_PROJECT_PORT=80 If it's 80, you don't need this line
 
   serveonginx:
     image: nginx
 ```
 
-2. use `docker-compose up -d` to start container.
+## Request a particular subdomain
+
+```yml
+version: '3.7'
+
+services:
+  serveo:
+    build:
+      context: .
+    environment:
+      - SERVEO_SUB_DOMAIN=ntuangiang
+      - SERVEO_SUB_DOMAIN_PORT=80 // If it's 80, you don't need this line 
+      - SERVEO_PUBLISH_PROJECT=serveonginx
+      - SERVEO_PUBLISH_PROJECT_PORT=80 If it's 80, you don't need this line
+
+  serveonginx:
+    image: nginx
+```
+
+Change the SSH username to get assigned a different subdomain:
+
+
+```yml
+version: '3.7'
+
+services:
+  serveo:
+    build:
+      context: .
+    environment:
+      - SERVEO_SUB_DOMAIN=ntuangiang
+      - SERVEO_SUB_DOMAIN_PORT=80 // If it's 80, you don't need this line 
+      - SERVEO_SSH_USER=ntuangiang
+      - SERVEO_PUBLISH_PROJECT=serveonginx
+      - SERVEO_PUBLISH_PROJECT_PORT=80 If it's 80, you don't need this line
+
+  serveonginx:
+    image: nginx
+```
+
+2. use `docker-compose up` to start container.
 
 3. you need to use `docker-compose logs serveo` to see your new URL.
 
@@ -40,13 +98,15 @@ services:
 ```bash
 $ git clone https://github.com/ntuangiang/serveo.git
 
-$ sudo docker-compose up -d
+$ cd example
+
+$ sudo docker-compose up
 
 $ sudo docker-compose logs serveo
 
-Attaching to dockerserveo_serveo_1
+Attaching to serveo_serveo_1
 serveo_1  | Warning: Permanently added 'serveo.net,195.201.91.242' (RSA) to the list of known hosts.
-serveo_1  | Forwarding HTTP traffic from https://proinde.serveo.net
+serveo_1  | Forwarding HTTP traffic from https://excolo.serveo.net/
 serveo_1  | Press g to start a GUI session and ctrl-c to quit.
 ```
 
