@@ -1,5 +1,7 @@
 FROM ubuntu:latest
 
+MAINTAINER ntuangiang@outlook.com
+
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y apt-utils \
     gettext-base \

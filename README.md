@@ -21,15 +21,13 @@ version: '3.7'
 
 services:
   serveo:
-    build:
-      context: .
+    image: ntuangiang/serveo
     environment:
       - SERVEO_PUBLISH_PROJECT=serveonginx
 
   serveonginx:
     image: nginx
 ```
-
 ## Request a particular subdomain
 
 ```yml
@@ -37,27 +35,7 @@ version: '3.7'
 
 services:
   serveo:
-    build:
-      context: .
-    environment:
-      - SERVEO_SUB_DOMAIN=ntuangiang
-      - SERVEO_SUB_DOMAIN_PORT=80 // If it's 80, you don't need this line 
-      - SERVEO_PUBLISH_PROJECT=serveonginx
-      - SERVEO_PUBLISH_PROJECT_PORT=80 If it's 80, you don't need this line
-
-  serveonginx:
-    image: nginx
-```
-
-## Request a particular subdomain
-
-```yml
-version: '3.7'
-
-services:
-  serveo:
-    build:
-      context: .
+    image: ntuangiang/serveo
     environment:
       - SERVEO_SUB_DOMAIN=ntuangiang
       - SERVEO_SUB_DOMAIN_PORT=80 // If it's 80, you don't need this line 
@@ -70,14 +48,12 @@ services:
 
 Change the SSH username to get assigned a different subdomain:
 
-
 ```yml
 version: '3.7'
 
 services:
   serveo:
-    build:
-      context: .
+    image: ntuangiang/serveo
     environment:
       - SERVEO_SUB_DOMAIN=ntuangiang
       - SERVEO_SUB_DOMAIN_PORT=80 // If it's 80, you don't need this line 
